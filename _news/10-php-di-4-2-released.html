@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>PHP-DI 4.2 released - The Dependency Injection Container for humans</title>
+    <meta name="description" content="PHP-DI is a Dependency Injection Container for PHP that intends to be practical and powerful">
+
+    <link rel="canonical" href="http://php-di.org" />
+
+    <meta name="application-name" content="PHP-DI"/>
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://pegasystems.github.io/pegakit/img/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="https://pegasystems.github.io/pegakit/img/apple-touch-icon-152x152.png" />
+    <link rel="icon" type="image/png" href="https://pegasystems.github.io/pegakit/img/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="https://pegasystems.github.io/pegakit/img/favicon-16x16.png" sizes="16x16" />
+    <meta name="msapplication-TileColor" content="#484949" />
+    <meta name="msapplication-TileImage" content="https://pegasystems.github.io/pegakit/img/mstile-144x144.png" />
+
+            <link href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css" rel="stylesheet">
+        <link href="https://pegasystems.github.io/pegakit/styles/highlight.github.css" rel="stylesheet">
+        
+        <link rel="stylesheet" href="https://patterns-dev.pega.com/styles/pegakit/pegakit.css" media="all">
+        <link href="https://pegasystems.github.io/pegakit/styles/all.min.css" rel="stylesheet">
+        
+        <style>
+          table {
+            width: 100%;
+          }
+        </style>
+    </head>
+<body>
+
+    <header>
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#top-navigation">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="https://pegasystems.github.io/pegakit/">PegaKit</a>
+                </div>
+                <div class="navbar-form navbar-left hidden-xs hidden-sm">
+                    <input id="search-input" type="text" class="form-control" placeholder="Search...">
+                </div>
+                <div class="collapse navbar-collapse" id="top-navigation">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="https://pegasystems.github.io/pegakit/docs/getting-started.html">Getting started</a></li>
+                        <li><a href="https://pegasystems.github.io/pegakit/docs/">Documentation</a></li>
+                        <!-- <li><a href="https://pegasystems.github.io/pegakit/news/">News</a></li> -->
+                        
+                        <li><a href="https://pegasystems.github.io/pegakit/change-log.html">Change log</a></li>
+                        
+                        <li><a class="github" href="https://github.com/pegasystems/pega-digital-design-system"><i class="fa fa-github"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    
+    <section class="container">
+        <div class="row">
+            <div class="col-md-9">
+
+                
+    <article>
+        <h1>PHP-DI 4.2 released</h1>
+
+        <p class="article-information">
+            Posted by Matthieu Napoli on July 29th 2014
+        </p>
+
+        <p>I am happy to announce that PHP-DI version 4.2 has been released.</p>
+<p>It comes with very interesting new features, but first you need to know that it also comes with
+a small BC break! This BC break was a necessary evil to fix an buggy and inconsistent behavior:</p>
+<pre><code class="language-php">    public function __construct(Bar $bar = null)
+    {
+        $this-&gt;bar = $bar ?: $this-&gt;createDefaultBar();
+    }</code></pre>
+<p>In 4.1, by default PHP-DI would inject a <code>Bar</code> instance in the <em>optional</em> parameter.
+This is not what one would expect, and this was causing unexpected bugs because it turned optional dependencies into required dependencies.</p>
+<p>Optional parameters are now ignored (i.e. their default value is injected unless configured otherwise).
+You can of course configure explicitly an injection in optional parameters (through PHP config or annotation).</p>
+<h2 id="containercall">Container::call()</h2>
+<p>The container <a href="../doc/container.html">already provided <code>get()</code>, <code>has()</code> and <code>make()</code></a>.
+Now it can also <code>call</code> functions using dependency injection.</p>
+<p>Example:</p>
+<pre><code class="language-php">$container-&gt;call(function (LoggerInterface $logger) {
+    $logger-&gt;info('Hello world!');
+});</code></pre>
+<p><code>Container::call()</code> will call the given function and resolve the parameters automatically.
+Those familiar with AngularJS (for example) will not be lost.</p>
+<p>But what's even more interesting is that you can also explicitly set parameters if some are not supposed to be given
+by the container:</p>
+<pre><code class="language-php">$parameters = [
+    'data' =&gt; /* some variable */
+];
+
+$container-&gt;call(function (LoggerInterface $logger, $data) {
+    // ...
+}, $parameters);</code></pre>
+<p><strong>Any real life example please?</strong></p>
+<p>There are many ways <code>call()</code> can become useful, a simple example would be a controller.
+In its raw definition, a controller is a simple callable.</p>
+<p>For example if you use Silex, a controller is just a closure:</p>
+<pre><code class="language-php">$app-&gt;get('/', function(Request $request) use ($app) {
+    $twig = $app['twig'];
+
+    return $twig-&gt;render('home.twig');
+});</code></pre>
+<p>What the framework does to call the controller is simple:</p>
+<pre><code class="language-php">$request = new Request(/* ... */);
+$controller = /* get from the router */;
+
+// Call the controller
+$controller($request);</code></pre>
+<p>What if the MVC framework used <code>Container::call()</code>?</p>
+<pre><code class="language-php">$request = new Request(/* ... */);
+$controller = /* get from the router */;
+
+// Call the controller
+$container-&gt;call($controller, [
+    'request' =&gt; $request
+]);</code></pre>
+<p>That allows to use dependency injection instead of the Service Locator antipattern:</p>
+<pre><code class="language-php">$app-&gt;get('/', function(Twig_Environment $twig, Request $request) use ($app) {
+    return $twig-&gt;render('home.twig');
+});</code></pre>
+<p>And that becomes even more interesting if you controller are classes!
+You can have PHP-DI instantiate your controller (using DI) <strong>and</strong> call the method:</p>
+<pre><code class="language-php">class HomeController {
+    public function helloAction($name) {
+        echo 'Hello ' . $name;
+    }
+}
+
+$controller = $container-&gt;make('HomeController');
+$container-&gt;call(
+    array($controller, 'helloAction'), // this is the callable
+    $_GET                              // parameters that can be injected
+);</code></pre>
+<p>What's great using <code>make()</code> and <code>call()</code>:</p>
+<ul>
+<li>you have dependency injection in your controller class (constructor, property, etc.)</li>
+<li>you can inject services in your actions</li>
+<li>you can also inject request parameters in your actions (here <code>$_GET</code> is used for the dirty example)</li>
+</ul>
+<p>You can see a more complete (and working) example here: <a href="https://github.com/mnapoli/minimal-app">mnapoli/minimal-app</a>.</p>
+<p>Of course, this is just an example, you are not supposed to re-write an MVC framework.
+But hopefully it helps to see the potential behind <code>call()</code>.</p>
+<p><a href="../doc/container.html">Read more in the documentation of the container's API</a></p>
+<h2 id="wildcards-in-definitions">Wildcards in definitions</h2>
+<p>You can use wildcards to define a batch of entries. It can be very useful to bind interfaces to implementations:</p>
+<pre><code class="language-php">return [
+    'Blog\Domain\*RepositoryInterface' =&gt; DI\object('Blog\Architecture\*DoctrineRepository'),
+];</code></pre>
+<p>In our example, the wildcard will match <code>Blog\Domain\UserRepositoryInterface</code>, and it will map it to
+<code>Blog\Architecture\UserDoctrineRepository</code>.</p>
+<p>Good to know:</p>
+<ul>
+<li>the wildcard does not match across namespaces</li>
+<li>an exact match (i.e. without <code>*</code>) will always be chosen over a match with a wildcard
+(first PHP-DI looks for an exact match, then it searches in the wildcards)</li>
+<li>in case of &quot;conflicts&quot; (i.e. 2 different matches with wildcards), the first match will prevail</li>
+</ul>
+<h2 id="prototype-scope-for-factories">Prototype scope for factories</h2>
+<p>Up till 4.1, factories where only in the Singleton scope: they were only called once.</p>
+<p>Now you can use the Prototype scope:</p>
+<pre><code class="language-php">return [
+    'foo' =&gt; DI\factory(function () {
+        return new Foo();
+    })-&gt;scope(Scope::PROTOTYPE()),
+];</code></pre>
+<p>With this scope, the factory will be called each time <code>foo</code> is retrieved.</p>
+<h2 id="41">4.1</h2>
+<p>Are you still on v4.0? Here is a reminder of the cool things included in 4.1:</p>
+<ul>
+<li>HHVM support</li>
+<li>better exception messages</li>
+<li><a href="https://github.com/container-interop/container-interop">container-interop</a> compatibility, which means better
+integration in other frameworks</li>
+<li>better Symfony 2 documentation</li>
+</ul>
+<h2 id="change-log">Change log</h2>
+<p>Some other minor bugfixes where included in the release.</p>
+<p>You can read the complete <a href="../change-log.html">change log</a>.</p>
+    </article>
+
+
+            </div>
+
+            <div class="col-md-3">
+                <h3>
+                    All posts
+                </h3>
+
+                <ul class="all-posts list-unstyled">
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/20-php-di-5-4-released.html">PHP-DI 5.4 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/19-php-di-5-3-released.html">PHP-DI 5.3 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/18-slim-bridge-released.html">Introducing the PHP-DI bridge for Slim</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/17-php-di-5-2-released.html">PHP-DI 5.2 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/16-php-di-5-1-released.html">PHP-DI 5.1 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/15-php-di-5-0-released.html">PHP-DI 5.0 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/14-php-di-5-syntaxic-sugar.html">Syntactic sugar in PHP-DI 5</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/13-php-di-4-4-released.html">PHP-DI 4.4 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/12-php-di-is-better-with-php-5-6.html">PHP 5.6 is out and PHP-DI just got better</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/11-php-di-4-3-released.html">PHP-DI 4.3 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/10-php-di-4-2-released.html">PHP-DI 4.2 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/09-php-di-4-1-released.html">PHP-DI 4.1 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/08-10000-installs.html">10.000 installs!</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/07-php-di-4-0-released.html">PHP-DI 4.0 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/06-php-di-4-0-new-definitions.html">What will change in PHP-DI 4: the new definition format</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/05-php-di-3-5.html">PHP-DI 3.5 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/04-php-di-3-4.html">PHP-DI 3.4 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/03-php-di-3-3.html">PHP-DI 3.3 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/02-php-di-3-2.html">PHP-DI 3.2 released</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+
+            <footer>
+            <div class='container'>
+                                    <p>
+                        Questions? Can't find what you're looking for?
+                        Please <a href="https://github.com/pegasystems/pegakit/issues/new">create an issue</a>
+                        or chat with us on Slack
+                        <!-- <a href="https://gitter.im/PHP-DI/PHP-DI">Gitter</a> -->
+                    </p>
+                                
+                <!-- <p>
+                    By <a href="http://mnapoli.fr/">Matthieu Napoli</a>
+                    and <a href="https://github.com/pegasystems/pegakit/graphs/contributors">contributors</a>
+                    |
+                    Website generated with
+                    <a href="http://couscous.io" target="_blank">Couscous</a>.
+                </p> -->
+            </div>
+        </footer>
+    
+              <script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+          
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                hljs.initHighlightingOnLoad();
+
+                // Add anchors to headers
+                $('article h2, article h3, article h4, article h5').each(function () {
+                    var url = document.URL.replace(/#.*$/, "") + '#' + $(this).attr('id');
+                    $(this).append(' <a class="anchor" href="' + url + '">#</a>');
+                });
+            });
+        </script>
+    
+
+
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var search = docsearch({
+                apiKey: 'ef6af24cbacae1f85d3c44741df49167',
+                indexName: 'php-di',
+                inputSelector: '#search-input'
+            });
+            var delay = (function () {
+                var timer = 0;
+                return function (callback, ms) {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+            search.autocomplete.on('autocomplete:selected', function (e, suggestion) {
+                var articleTitle = suggestion.subcategory;
+                // Strip HTML tags
+                var div = document.createElement("div");
+                div.innerHTML = articleTitle;
+                articleTitle = div.textContent || div.innerText || "";
+                // _gaq.push(['_trackEvent', 'search', 'click', articleTitle]);
+            });
+            $('#search-input').bind('input', function () {
+                var search = $(this).val();
+                if (search.length < 3) {
+                    return;
+                }
+                // delay(function () {
+                //     _gaq.push(['_trackPageview', '/search?q=' + search]);
+                // }, 600);
+            });
+        });
+    </script>
+
+</body>
+</html>

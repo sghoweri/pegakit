@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>PHP-DI 3.1 released - The Dependency Injection Container for humans</title>
+    <meta name="description" content="PHP-DI is a Dependency Injection Container for PHP that intends to be practical and powerful">
+
+    <link rel="canonical" href="http://php-di.org" />
+
+    <meta name="application-name" content="PHP-DI"/>
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://pegasystems.github.io/pegakit/img/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="https://pegasystems.github.io/pegakit/img/apple-touch-icon-152x152.png" />
+    <link rel="icon" type="image/png" href="https://pegasystems.github.io/pegakit/img/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="https://pegasystems.github.io/pegakit/img/favicon-16x16.png" sizes="16x16" />
+    <meta name="msapplication-TileColor" content="#484949" />
+    <meta name="msapplication-TileImage" content="https://pegasystems.github.io/pegakit/img/mstile-144x144.png" />
+
+            <link href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css" rel="stylesheet">
+        <link href="https://pegasystems.github.io/pegakit/styles/highlight.github.css" rel="stylesheet">
+        
+        <link rel="stylesheet" href="https://patterns-dev.pega.com/styles/pegakit/pegakit.css" media="all">
+        <link href="https://pegasystems.github.io/pegakit/styles/all.min.css" rel="stylesheet">
+        
+        <style>
+          table {
+            width: 100%;
+          }
+        </style>
+    </head>
+<body>
+
+    <header>
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#top-navigation">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="https://pegasystems.github.io/pegakit/">PegaKit</a>
+                </div>
+                <div class="navbar-form navbar-left hidden-xs hidden-sm">
+                    <input id="search-input" type="text" class="form-control" placeholder="Search...">
+                </div>
+                <div class="collapse navbar-collapse" id="top-navigation">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="https://pegasystems.github.io/pegakit/docs/getting-started.html">Getting started</a></li>
+                        <li><a href="https://pegasystems.github.io/pegakit/docs/">Documentation</a></li>
+                        <!-- <li><a href="https://pegasystems.github.io/pegakit/news/">News</a></li> -->
+                        
+                        <li><a href="https://pegasystems.github.io/pegakit/change-log.html">Change log</a></li>
+                        
+                        <li><a class="github" href="https://github.com/pegasystems/pega-digital-design-system"><i class="fa fa-github"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    
+    <section class="container">
+        <div class="row">
+            <div class="col-md-9">
+
+                
+    <article>
+        <h1>PHP-DI 3.1 released</h1>
+
+        <p class="article-information">
+            Posted by Matthieu Napoli on June 23rd 2013
+        </p>
+
+        <p>I am happy to announce that I have just released PHP-DI version 3.1.</p>
+<p>The major new feature is the <strong>Zend Framework 1 integration</strong>. You can now use PHP-DI very easily with ZF1, and the integration will provide you dependency injection into your controllers.</p>
+<p>Mixing different definition sources (reflection, annotations, files, …) is now more reliable with orders and priorities. Sources are all now correctly priorized, allowing you to override definitions as you would expect. Read more in the <a href="../doc/definition-overriding.html"><strong>Definition overriding</strong> documentation</a>.</p>
+<p>Finally, <a href="https://github.com/PHP-DI/PHP-DI/issues/79">a small fix</a> to allow to <strong>define <code>null</code> entries</strong>:</p>
+<pre><code class="language-php">// Set a null value for 'foo'
+$container-&gt;set('foo', null);
+
+// No change: without a value given, returns a class definition helper
+$container-&gt;set('foo')
+    -&gt;bindTo('My\Foo\Class')
+    -&gt;withConstructor(array('SomeClass'));</code></pre>
+<h2 id="zend-framework-1-integration">Zend Framework 1 integration</h2>
+<p>To set up your ZF1 project, you can install the dependencies with <a href="http://getcomposer.org/">Composer</a>:</p>
+<pre><code class="language-php">{
+    "require": {
+        "mnapoli/php-di": "3.1.*",
+        "mnapoli/php-di-zf1": "*"
+    }
+}</code></pre>
+<p>In your bootstrap, you only need to replace the default Dispatcher with the one provided into <code>mnapoli/php-di-zf1</code>:</p>
+<pre><code class="language-php">    protected function _initDependencyInjection() {
+        $container = new \DI\Container();
+
+        $dispatcher = new \DI\ZendFramework1\Dispatcher();
+        $dispatcher-&gt;setContainer($container);
+
+        Zend_Controller_Front::getInstance()-&gt;setDispatcher($dispatcher);
+    }</code></pre>
+<p>Easy right? Now you can inject dependencies into your controllers.</p>
+<p>Here is an example using annotations (you can't use constructor injection though since ZF1 controllers have a specific constructor):</p>
+<pre><code class="language-php">use DI\Annotation\Inject;
+
+class GuestbookController extends Zend_Controller_Action
+{
+    /**
+     * @Inject
+     * @var Application_Service_GuestbookService
+     */
+    private $guestbookService;
+
+    public function signAction()
+    {
+        $form = new Application_Form_Guestbook();
+        $this-&gt;guestbookService-&gt;addEntry($form-&gt;getValues());
+    }
+}</code></pre>
+<p>Read more about <a href="https://github.com/PHP-DI/PHP-DI-ZF1">Zend Framework 1 integration</a>.</p>
+<h2 id="integration-with-other-frameworks-symfony-zf2-">Integration with other frameworks (Symfony, ZF2, …)</h2>
+<p>Integration with other frameworks <a href="https://github.com/PHP-DI/PHP-DI/issues?state=open">are planned</a>.</p>
+<p>If you want to help, feel free to submit a pull request or let's talk on <a href="https://twitter.com/PHPDI">Twitter</a>.</p>
+    </article>
+
+
+            </div>
+
+            <div class="col-md-3">
+                <h3>
+                    All posts
+                </h3>
+
+                <ul class="all-posts list-unstyled">
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/20-php-di-5-4-released.html">PHP-DI 5.4 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/19-php-di-5-3-released.html">PHP-DI 5.3 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/18-slim-bridge-released.html">Introducing the PHP-DI bridge for Slim</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/17-php-di-5-2-released.html">PHP-DI 5.2 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/16-php-di-5-1-released.html">PHP-DI 5.1 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/15-php-di-5-0-released.html">PHP-DI 5.0 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/14-php-di-5-syntaxic-sugar.html">Syntactic sugar in PHP-DI 5</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/13-php-di-4-4-released.html">PHP-DI 4.4 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/12-php-di-is-better-with-php-5-6.html">PHP 5.6 is out and PHP-DI just got better</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/11-php-di-4-3-released.html">PHP-DI 4.3 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/10-php-di-4-2-released.html">PHP-DI 4.2 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/09-php-di-4-1-released.html">PHP-DI 4.1 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/08-10000-installs.html">10.000 installs!</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/07-php-di-4-0-released.html">PHP-DI 4.0 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/06-php-di-4-0-new-definitions.html">What will change in PHP-DI 4: the new definition format</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/05-php-di-3-5.html">PHP-DI 3.5 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/04-php-di-3-4.html">PHP-DI 3.4 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/03-php-di-3-3.html">PHP-DI 3.3 released</a>
+                    </li>
+                    <li>
+                        <a href="https://pegasystems.github.io/pegakit/news/02-php-di-3-2.html">PHP-DI 3.2 released</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+
+            <footer>
+            <div class='container'>
+                                    <p>
+                        Questions? Can't find what you're looking for?
+                        Please <a href="https://github.com/pegasystems/pegakit/issues/new">create an issue</a>
+                        or chat with us on Slack
+                        <!-- <a href="https://gitter.im/PHP-DI/PHP-DI">Gitter</a> -->
+                    </p>
+                                
+                <!-- <p>
+                    By <a href="http://mnapoli.fr/">Matthieu Napoli</a>
+                    and <a href="https://github.com/pegasystems/pegakit/graphs/contributors">contributors</a>
+                    |
+                    Website generated with
+                    <a href="http://couscous.io" target="_blank">Couscous</a>.
+                </p> -->
+            </div>
+        </footer>
+    
+              <script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+          
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                hljs.initHighlightingOnLoad();
+
+                // Add anchors to headers
+                $('article h2, article h3, article h4, article h5').each(function () {
+                    var url = document.URL.replace(/#.*$/, "") + '#' + $(this).attr('id');
+                    $(this).append(' <a class="anchor" href="' + url + '">#</a>');
+                });
+            });
+        </script>
+    
+
+
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var search = docsearch({
+                apiKey: 'ef6af24cbacae1f85d3c44741df49167',
+                indexName: 'php-di',
+                inputSelector: '#search-input'
+            });
+            var delay = (function () {
+                var timer = 0;
+                return function (callback, ms) {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+            search.autocomplete.on('autocomplete:selected', function (e, suggestion) {
+                var articleTitle = suggestion.subcategory;
+                // Strip HTML tags
+                var div = document.createElement("div");
+                div.innerHTML = articleTitle;
+                articleTitle = div.textContent || div.innerText || "";
+                // _gaq.push(['_trackEvent', 'search', 'click', articleTitle]);
+            });
+            $('#search-input').bind('input', function () {
+                var search = $(this).val();
+                if (search.length < 3) {
+                    return;
+                }
+                // delay(function () {
+                //     _gaq.push(['_trackPageview', '/search?q=' + search]);
+                // }, 600);
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>PegaKit - The Dependency Injection Container for humans</title>
+    <meta name="description" content="PHP-DI is a Dependency Injection Container for PHP that intends to be practical and powerful">
+
+    <link rel="canonical" href="http://php-di.org" />
+
+    <meta name="application-name" content="PHP-DI"/>
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://pegasystems.github.io/pegakit/img/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="https://pegasystems.github.io/pegakit/img/apple-touch-icon-152x152.png" />
+    <link rel="icon" type="image/png" href="https://pegasystems.github.io/pegakit/img/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="https://pegasystems.github.io/pegakit/img/favicon-16x16.png" sizes="16x16" />
+    <meta name="msapplication-TileColor" content="#484949" />
+    <meta name="msapplication-TileImage" content="https://pegasystems.github.io/pegakit/img/mstile-144x144.png" />
+
+            <link href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css" rel="stylesheet">
+        <link href="https://pegasystems.github.io/pegakit/styles/highlight.github.css" rel="stylesheet">
+        
+        <link rel="stylesheet" href="https://patterns-dev.pega.com/styles/pegakit/pegakit.css" media="all">
+        <link href="https://pegasystems.github.io/pegakit/styles/all.min.css" rel="stylesheet">
+        
+        <style>
+          table {
+            width: 100%;
+          }
+        </style>
+    </head>
+<body>
+
+    <header>
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#top-navigation">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="https://pegasystems.github.io/pegakit/">PegaKit</a>
+                </div>
+                <div class="navbar-form navbar-left hidden-xs hidden-sm">
+                    <input id="search-input" type="text" class="form-control" placeholder="Search...">
+                </div>
+                <div class="collapse navbar-collapse" id="top-navigation">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="https://pegasystems.github.io/pegakit/docs/getting-started.html">Getting started</a></li>
+                        <li><a href="https://pegasystems.github.io/pegakit/docs/">Documentation</a></li>
+                        <!-- <li><a href="https://pegasystems.github.io/pegakit/news/">News</a></li> -->
+                        
+                        <li><a href="https://pegasystems.github.io/pegakit/change-log.html">Change log</a></li>
+                        
+                        <li><a class="github" href="https://github.com/pegasystems/pega-digital-design-system"><i class="fa fa-github"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+        <div class="home">
+
+        <section class="jumbotron">
+            <div class="container">
+                <h1>PegaKit</h1>
+                <p>
+                    The visual style guide and pattern library governing Pegasystems' digital properties.
+                </p>
+                <p>
+                    <a href="https://pegasystems.github.io/pegakit/docs/getting-started.html" class="c-button">
+                        Get started
+                    </a>
+                    <a href="https://pegasystems.github.io/pegakit/docs/" class="c-button c-button--flat">
+                        Documentation
+                    </a>
+                </p>
+            </div>
+        </section>
+
+        <!-- <section class="odd">
+            <div id="autowiring" class='container'>
+
+    <h2><a href="#autowiring">Autowiring</a></h2>
+
+    <div class="row">
+
+        <div class="col-md-8 col-md-offset-2">
+
+            <p>
+                Type-hint your constructor parameters and the container can guess which dependencies to inject.
+            </p>
+
+<pre><code class="php">class Foo
+{
+    private $bar;
+
+    public function __construct(Bar $bar)
+    {
+        $this->bar = $bar;
+    }
+}</code></pre>
+
+            <p>
+                Covers 80% of the use cases with 0 configuration.
+            </p>
+
+        </div>
+
+    </div>
+
+    <p class="text-center">
+        <a href="doc/autowiring.html" class="btn btn-default">Learn more</a>
+    </p>
+
+</div>        </section> -->
+
+        <!-- <section class="">
+            <div id="configuration" class='container'>
+
+    <h2><a href="#configuration">Expressive configuration</a></h2>
+
+    <p class="text-center">
+        PHP-DI's configuration is written in PHP, allowing to benefit from auto-completion, static analysis and refactoring support with any IDE.
+    </p>
+
+    <div class='row'>
+        <div class='col-md-6'>
+            <h4>Object creation</h4>
+<pre><code class="php">return [
+    Foo::class => object()
+        ->constructor(
+            get(Bar::class)
+        )
+];</code></pre>
+        </div>
+        <div class='col-md-6'>
+            <h4>Inline factories</h4>
+<pre><code class="php">return [
+    Foo::class => function ($container) {
+        $bar = $container->get(Bar::class);
+        return new Foo($bar);
+    }
+];</code></pre>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Interface-to-implementation binding</h4>
+<pre><code class="php">return [
+    NotifierInterface::class => get(EmailNotifier::class)
+];</code></pre>
+        </div>
+        <div class="col-md-6">
+            <h4>Environment variables</h4>
+<pre><code class="php">return [
+    'db.host' => env('DB_HOST', 'default value')
+];</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <p>
+        The configuration format <a href="https://pegasystems.github.io/pegakit/news/06-php-di-4-0-new-definitions.html">has been imagined</a> as a successor of XML and YAML, taking advantages of all the latest features of PHP:
+    </p>
+
+    <div class="row">
+        <div class='col-md-4'>
+            <h4>PHP 5.4 short arrays</h4>
+<pre><code class="php">return [
+
+
+];</code></pre>
+        </div>
+        <div class='col-md-4'>
+            <h4>PHP 5.5 <code>::class</code> magic constant</h4>
+<pre><code class="php">return [
+    Foo::class => DI\object()
+      ->constructor(DI\get(Bar::class))
+];</code></pre>
+        </div>
+        <div class='col-md-4'>
+            <h4>PHP 5.6 <code>use function</code></h4>
+<pre><code class="php">return [
+    Foo::class => object()
+      ->constructor(get(Bar::class))
+];</code></pre>
+        </div>
+    </div>
+
+    <p class="text-center">
+        <a href="doc/php-definitions.html" class="btn btn-default">Learn more</a>
+    </p>
+
+</div>        </section>
+
+        <section class="odd">
+            <div id="modules" class='container'>
+
+    <h2><a href="#modules">Scales with your application</a></h2>
+
+    <div class="row">
+
+        <div class='col-md-6'>
+
+            <h4>From simple applications</h4>
+
+            <p>
+                Just create the container and you are good to go thanks to autowiring.
+            </p>
+
+<pre><code class="php">$container = ContainerBuilder::buildDevContainer();
+
+$home = $container->get(HomeController::class);
+</code></pre>
+
+            <p>
+                You can also define services à la Pimple:
+            </p>
+
+<pre><code class="php">$container->set('db', new Database($options));
+
+$container->set('logger', function () {
+    $logger = new Monolog\Logger();
+    $logger->pushHandler(new StreamHandler('app.log'));
+    return $logger;
+});
+
+$db = $container->get('db');
+$logger = $container->get('logger');
+</code></pre>
+
+        </div>
+
+        <div class='col-md-6'>
+
+            <h4>To complex and modular systems</h4>
+
+            <p>
+                Register as many configuration files as you want.
+            </p>
+
+<pre><code class="php">// base config
+return [
+    'notifiers' => [
+        get(EmailNotifier::class),
+    ]
+];</code></pre>
+
+            <p>
+                Use definition overriding to extend lists, decorate or replace previous entries…
+            </p>
+
+<pre><code class="php">// module (aka bundle) config
+return [
+    'notifiers' => add([
+        get(TextNotifier::class),
+        get(MobilePushNotifier::class),
+    ])
+];</code></pre>
+
+        </div>
+
+    </div>
+</div>
+        </section>
+
+        <section class="">
+            <div id="container-api" class="container">
+
+    <h2><a href="#container-api">Powerful container API</a></h2>
+
+    <p class="text-center">
+        PHP-DI provides the classic API of a container as well as advanced features useful to build or extend a framework.
+    </p>
+
+    <div class="row">
+
+        <div class="col-md-6">
+            <h4>Get & Has</h4>
+            <p>
+                PHP-DI is compliant with <a href="https://github.com/container-interop/container-interop">container-interop</a>:
+            </p>
+            <pre><code class="php">$container->get($name);
+$container->has($name);</code></pre>
+        </div>
+
+        <div class="col-md-6">
+            <h4>Make</h4>
+            <p>
+                Use the container as a factory:
+            </p>
+            <pre><code class="php">$parameters = [ ... ];
+$container->make(Foo::class, $parameters);</code></pre>
+            <p>
+                Missing constructor parameters will be resolved from the container.
+            </p>
+        </div>
+
+        <div class="col-md-12">
+            <h4>Invoke a callable</h4>
+            <p>
+                Dependency injection in callables, à la AngularJS:
+            </p>
+            <pre><code class="php">$container->call(function (Logger $logger, EntityManager $em) {
+    // ...
+});</code></pre>
+        </div>
+
+    </div>
+
+    <p class="text-center">
+        <a href="doc/container.html" class="btn btn-default">Learn more</a>
+    </p>
+
+</div>
+        </section>
+
+        <section class="odd">
+            <div id="integrations" class="container framework-integrations">
+
+    <h2><a href="#integrations">Integrations</a></h2>
+
+    <p>
+        PHP-DI integrates easily in your application or in frameworks.
+    </p>
+
+    <div class="row">
+
+                    <div class="col-sm-3 col-md-2">
+                <div class="thumbnail">
+                    <a href="https://pegasystems.github.io/pegakit/doc/frameworks/zf1.html" title="Zend Framework 1">
+                        <img class="framework-logo" src="https://pegasystems.github.io/pegakit/img/frameworks/zf1.png" alt="Zend Framework 1">
+                    </a>
+                    <div class="caption">
+                        <h4>
+                            <a href="https://pegasystems.github.io/pegakit/doc/frameworks/zf1.html" title="Zend Framework 1 integration guide">Zend Framework 1</a>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+                    <div class="col-sm-3 col-md-2">
+                <div class="thumbnail">
+                    <a href="https://pegasystems.github.io/pegakit/doc/frameworks/zf2.html" title="Zend Framework 2">
+                        <img class="framework-logo" src="https://pegasystems.github.io/pegakit/img/frameworks/zf2.png" alt="Zend Framework 2">
+                    </a>
+                    <div class="caption">
+                        <h4>
+                            <a href="https://pegasystems.github.io/pegakit/doc/frameworks/zf2.html" title="Zend Framework 2 integration guide">Zend Framework 2</a>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+                    <div class="col-sm-3 col-md-2">
+                <div class="thumbnail">
+                    <a href="https://pegasystems.github.io/pegakit/doc/frameworks/symfony2.html" title="Symfony">
+                        <img class="framework-logo" src="https://pegasystems.github.io/pegakit/img/frameworks/symfony2.png" alt="Symfony">
+                    </a>
+                    <div class="caption">
+                        <h4>
+                            <a href="https://pegasystems.github.io/pegakit/doc/frameworks/symfony2.html" title="Symfony integration guide">Symfony</a>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+                    <div class="col-sm-3 col-md-2">
+                <div class="thumbnail">
+                    <a href="https://pegasystems.github.io/pegakit/doc/frameworks/silex.html" title="Silex">
+                        <img class="framework-logo" src="https://pegasystems.github.io/pegakit/img/frameworks/silex.png" alt="Silex">
+                    </a>
+                    <div class="caption">
+                        <h4>
+                            <a href="https://pegasystems.github.io/pegakit/doc/frameworks/silex.html" title="Silex integration guide">Silex</a>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+                    <div class="col-sm-3 col-md-2">
+                <div class="thumbnail">
+                    <a href="https://pegasystems.github.io/pegakit/doc/frameworks/slim.html" title="Slim">
+                        <img class="framework-logo" src="https://pegasystems.github.io/pegakit/img/frameworks/slim.png" alt="Slim">
+                    </a>
+                    <div class="caption">
+                        <h4>
+                            <a href="https://pegasystems.github.io/pegakit/doc/frameworks/slim.html" title="Slim integration guide">Slim</a>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+                    <div class="col-sm-3 col-md-2">
+                <div class="thumbnail">
+                    <a href="https://pegasystems.github.io/pegakit/doc/frameworks/silly.html" title="Silly">
+                        <img class="framework-logo" src="https://pegasystems.github.io/pegakit/img/frameworks/silly.png" alt="Silly">
+                    </a>
+                    <div class="caption">
+                        <h4>
+                            <a href="https://pegasystems.github.io/pegakit/doc/frameworks/silly.html" title="Silly integration guide">Silly</a>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        
+    </div>
+
+    <p>
+        No framework? It works too, have a look at this <a href="https://github.com/PHP-DI/demo">demo application</a>.
+    </p>
+
+    <p class="text-center">
+        <a href="doc/#frameworks-integration" class="btn btn-default">Learn more</a>
+    </p>
+
+</div>        </section> -->
+
+    </div>
+
+
+            <footer>
+            <div class='container'>
+                    <!-- <p>
+        Developed with care -
+        <a href='https://travis-ci.org/PHP-DI/PHP-DI'>
+            <img src="https://img.shields.io/travis/PHP-DI/PHP-DI.svg?style=flat-square"></a>
+        <a href='https://scrutinizer-ci.com/g/PHP-DI/PHP-DI/'>
+            <img src="https://img.shields.io/scrutinizer/g/PHP-DI/PHP-DI.svg?style=flat-square"></a>
+        <a href='https://coveralls.io/r/PHP-DI/PHP-DI?branch=master'>
+            <img src="https://img.shields.io/coveralls/PHP-DI/PHP-DI/master.svg?style=flat-square" alt='Coverage Status'></a>
+    </p> -->
+                
+                <!-- <p>
+                    By <a href="http://mnapoli.fr/">Matthieu Napoli</a>
+                    and <a href="https://github.com/pegasystems/pegakit/graphs/contributors">contributors</a>
+                    |
+                    Website generated with
+                    <a href="http://couscous.io" target="_blank">Couscous</a>.
+                </p> -->
+            </div>
+        </footer>
+    
+          <script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+          
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                hljs.initHighlightingOnLoad();
+
+                // Add anchors to headers
+                $('article h2, article h3, article h4, article h5').each(function () {
+                    var url = document.URL.replace(/#.*$/, "") + '#' + $(this).attr('id');
+                    $(this).append(' <a class="anchor" href="' + url + '">#</a>');
+                });
+            });
+        </script>
+    
+
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var search = docsearch({
+                apiKey: 'ef6af24cbacae1f85d3c44741df49167',
+                indexName: 'php-di',
+                inputSelector: '#search-input'
+            });
+            var delay = (function () {
+                var timer = 0;
+                return function (callback, ms) {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+            search.autocomplete.on('autocomplete:selected', function (e, suggestion) {
+                var articleTitle = suggestion.subcategory;
+                // Strip HTML tags
+                var div = document.createElement("div");
+                div.innerHTML = articleTitle;
+                articleTitle = div.textContent || div.innerText || "";
+                // _gaq.push(['_trackEvent', 'search', 'click', articleTitle]);
+            });
+            $('#search-input').bind('input', function () {
+                var search = $(this).val();
+                if (search.length < 3) {
+                    return;
+                }
+                // delay(function () {
+                //     _gaq.push(['_trackPageview', '/search?q=' + search]);
+                // }, 600);
+            });
+        });
+    </script>
+
+</body>
+</html>
