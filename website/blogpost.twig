@@ -1,0 +1,20 @@
+{% extends "blog.twig" %}
+
+{% block blogcontent %}
+
+    <article>
+        <h1>{{ title }}</h1>
+
+        <p class="article-information">
+            Posted by {{ author }} on {{ date }}
+        </p>
+
+        {{ content|raw }}
+    </article>
+
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>PHP-DI 3.3 released - The Dependency Injection Container for humans</title>
+    <meta name="description" content="PHP-DI is a Dependency Injection Container for PHP that intends to be practical and powerful">
+
+    <link rel="canonical" href="http://php-di.org" />
+
+    <meta name="application-name" content="PHP-DI"/>
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/img/apple-touch-icon-152x152.png" />
+    <link rel="icon" type="image/png" href="/img/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/img/favicon-16x16.png" sizes="16x16" />
+    <meta name="msapplication-TileColor" content="#484949" />
+    <meta name="msapplication-TileImage" content="/img/mstile-144x144.png" />
+
+            <link href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css" rel="stylesheet">
+        <link href="/styles/highlight.github.css" rel="stylesheet">
+        
+        <link rel="stylesheet" href="https://patterns-dev.pega.com/styles/pegakit/pegakit.css" media="all">
+        <link href="/styles/all.min.css" rel="stylesheet">
+        
+        <style>
+          table {
+            width: 100%;
+          }
+        </style>
+    </head>
+<body>
+
+    <header>
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#top-navigation">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">PegaKit</a>
+                </div>
+                <div class="navbar-form navbar-left hidden-xs hidden-sm">
+                    <input id="search-input" type="text" class="form-control" placeholder="Search...">
+                </div>
+                <div class="collapse navbar-collapse" id="top-navigation">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/docs/getting-started.html">Getting started</a></li>
+                        <li><a href="/docs/">Documentation</a></li>
+                        <!-- <li><a href="/news/">News</a></li> -->
+                        
+                        <li><a href="/change-log.html">Change log</a></li>
+                        
+                        <li><a class="github" href="https://github.com/pegasystems/pega-digital-design-system"><i class="fa fa-github"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    
+    <section class="container">
+        <div class="row">
+            <div class="col-md-9">
+
+                
+    <article>
+        <h1>PHP-DI 3.3 released</h1>
+
+        <p class="article-information">
+            Posted by Matthieu Napoli on July 30rd 2013
+        </p>
+
+        <p>I am happy to announce that PHP-DI version 3.3 has just been released.</p>
+<p>The major new feature is the possibility to inject all dependencies of <strong>an existing instance</strong>.</p>
+<p>But before jumping into that, did you know there's an article on <a href="../doc/how-it-works.html">how PHP-DI works</a>.</p>
+<h2 id="containerinjecton">Container::injectOn()</h2>
+<p><em>Read the full documentation <a href="../doc/inject-on-instance.html">here</a></em></p>
+<pre><code class="language-php">$myObject = new MyClass();
+
+$container-&gt;injectOn($myObject);</code></pre>
+<p>Now, <code>$myObject</code> has all its dependencies injected (setter injections and property injections).</p>
+<p>It is basically the same as <code>$myObject = $container-&gt;get('MyClass')</code> except <strong>you</strong> create the instance.</p>
+<h3 id="why">Why?</h3>
+<p>Weird right? Well it's not supposed to be used everywhere.</p>
+<p>Hopefully, that will help <strong>a lot</strong> to integrate PHP-DI with other frameworks:</p>
+<ul>
+<li><strong>MVC frameworks</strong> (Symfony 2, Zend Framework 2, …): inject dependencies of the controller, in the controller itself.</li>
+<li><strong>Tests</strong> (PHPUnit, …): inject tools in your test class, for example a logger, a timer (for performance test), <strong>the entity manager</strong> (for integration tests), …</li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-php">class MyController {
+    public function __construct() {
+        // get container ...
+        $container-&gt;injectOn($this);
+    }
+}</code></pre>
+<p><strong>Of course</strong>, the preferred method is still to use <code>$container-&gt;get()</code>. But sometimes you can't get to the root of the framework to intercept the creation of your objects (I'm looking at you most MVC frameworks, PHPUnit &amp; …)</p>
+<h3 id="good-to-know">Good to know</h3>
+<p>PHP-DI will not perform any constructor injection. But of course most of the time you'll be using that feature is when you can't/don't want to use the constructor for getting your dependencies.</p>
+<h2 id="change-log">Change log</h2>
+<p>Except this feature, 3.3 contains an optimization for definition resolution and a bugfix for a rare situation.</p>
+<p>Read all the changes and their authors in the <a href="../change-log.html">change log</a>.</p>
+    </article>
+
+
+            </div>
+
+            <div class="col-md-3">
+                <h3>
+                    All posts
+                </h3>
+
+                <ul class="all-posts list-unstyled">
+                    <li>
+                        <a href="/news/20-php-di-5-4-released.html">PHP-DI 5.4 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/19-php-di-5-3-released.html">PHP-DI 5.3 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/18-slim-bridge-released.html">Introducing the PHP-DI bridge for Slim</a>
+                    </li>
+                    <li>
+                        <a href="/news/17-php-di-5-2-released.html">PHP-DI 5.2 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/16-php-di-5-1-released.html">PHP-DI 5.1 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/15-php-di-5-0-released.html">PHP-DI 5.0 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/14-php-di-5-syntaxic-sugar.html">Syntactic sugar in PHP-DI 5</a>
+                    </li>
+                    <li>
+                        <a href="/news/13-php-di-4-4-released.html">PHP-DI 4.4 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/12-php-di-is-better-with-php-5-6.html">PHP 5.6 is out and PHP-DI just got better</a>
+                    </li>
+                    <li>
+                        <a href="/news/11-php-di-4-3-released.html">PHP-DI 4.3 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/10-php-di-4-2-released.html">PHP-DI 4.2 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/09-php-di-4-1-released.html">PHP-DI 4.1 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/08-10000-installs.html">10.000 installs!</a>
+                    </li>
+                    <li>
+                        <a href="/news/07-php-di-4-0-released.html">PHP-DI 4.0 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/06-php-di-4-0-new-definitions.html">What will change in PHP-DI 4: the new definition format</a>
+                    </li>
+                    <li>
+                        <a href="/news/05-php-di-3-5.html">PHP-DI 3.5 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/04-php-di-3-4.html">PHP-DI 3.4 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/03-php-di-3-3.html">PHP-DI 3.3 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/02-php-di-3-2.html">PHP-DI 3.2 released</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+
+            <footer>
+            <div class='container'>
+                                    <p>
+                        Questions? Can't find what you're looking for?
+                        Please <a href="https://github.com/pegasystems/pegakit/issues/new">create an issue</a>
+                        or chat with us on Slack
+                        <!-- <a href="https://gitter.im/PHP-DI/PHP-DI">Gitter</a> -->
+                    </p>
+                                
+                <!-- <p>
+                    By <a href="http://mnapoli.fr/">Matthieu Napoli</a>
+                    and <a href="https://github.com/pegasystems/pegakit/graphs/contributors">contributors</a>
+                    |
+                    Website generated with
+                    <a href="http://couscous.io" target="_blank">Couscous</a>.
+                </p> -->
+            </div>
+        </footer>
+    
+              <script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+          
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                hljs.initHighlightingOnLoad();
+
+                // Add anchors to headers
+                $('article h2, article h3, article h4, article h5').each(function () {
+                    var url = document.URL.replace(/#.*$/, "") + '#' + $(this).attr('id');
+                    $(this).append(' <a class="anchor" href="' + url + '">#</a>');
+                });
+            });
+        </script>
+    
+
+
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var search = docsearch({
+                apiKey: 'ef6af24cbacae1f85d3c44741df49167',
+                indexName: 'php-di',
+                inputSelector: '#search-input'
+            });
+            var delay = (function () {
+                var timer = 0;
+                return function (callback, ms) {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+            search.autocomplete.on('autocomplete:selected', function (e, suggestion) {
+                var articleTitle = suggestion.subcategory;
+                // Strip HTML tags
+                var div = document.createElement("div");
+                div.innerHTML = articleTitle;
+                articleTitle = div.textContent || div.innerText || "";
+                // _gaq.push(['_trackEvent', 'search', 'click', articleTitle]);
+            });
+            $('#search-input').bind('input', function () {
+                var search = $(this).val();
+                if (search.length < 3) {
+                    return;
+                }
+                // delay(function () {
+                //     _gaq.push(['_trackPageview', '/search?q=' + search]);
+                // }, 600);
+            });
+        });
+    </script>
+        <!-- Livereload -->
+        <script>
+            document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+                    ':35729/livereload.js?snipver=1"></' + 'script>')
+        </script>
+        <!-- End Livereload -->
+    </body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Getting started - The Dependency Injection Container for humans</title>
+    <meta name="description" content="PHP-DI is a Dependency Injection Container for PHP that intends to be practical and powerful">
+
+    <link rel="canonical" href="http://php-di.org" />
+
+    <meta name="application-name" content="PHP-DI"/>
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/img/apple-touch-icon-152x152.png" />
+    <link rel="icon" type="image/png" href="/img/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/img/favicon-16x16.png" sizes="16x16" />
+    <meta name="msapplication-TileColor" content="#484949" />
+    <meta name="msapplication-TileImage" content="/img/mstile-144x144.png" />
+
+            <link href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css" rel="stylesheet">
+        <link href="/styles/highlight.github.css" rel="stylesheet">
+        
+        <link rel="stylesheet" href="https://patterns-dev.pega.com/styles/pegakit/pegakit.css" media="all">
+        <link href="/styles/all.min.css" rel="stylesheet">
+        
+        <style>
+          table {
+            width: 100%;
+          }
+        </style>
+    </head>
+<body>
+
+    <header>
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#top-navigation">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">PegaKit</a>
+                </div>
+                <div class="navbar-form navbar-left hidden-xs hidden-sm">
+                    <input id="search-input" type="text" class="form-control" placeholder="Search...">
+                </div>
+                <div class="collapse navbar-collapse" id="top-navigation">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/docs/getting-started.html">Getting started</a></li>
+                        <li><a href="/docs/">Documentation</a></li>
+                        <!-- <li><a href="/news/">News</a></li> -->
+                        
+                        <li><a href="/change-log.html">Change log</a></li>
+                        
+                        <li><a class="github" href="https://github.com/pegasystems/pega-digital-design-system"><i class="fa fa-github"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    
+    <div class="container documentation">
+
+        <div class="sidebar">
+            <ul>
+                                    <li>
+                        <span class="section-title">CSS Framework</span>
+
+                        <ul>
+                                                            <li class="">
+                                    <a href="/docs/css-framework/utilities.html">
+                                        All Utilities
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/docs/css-framework/utilities/font-sizes.html">
+                                        Font Sizes
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/docs/css-framework/utilities/text-alignment.html">
+                                        Text Alignment
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/docs/css-framework/utilities/floats.html">
+                                        Floats
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/docs/css-framework/utilities/clearfix.html">
+                                        Clearfix
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/">
+                                        Spacing (Docs In Progress)
+                                    </a>
+                                </li>
+                                                    </ul>
+                    </li>
+                            </ul>
+        </div>
+
+        <article>
+            <div class="pull-right">
+                <a href="https://github.com/pegasystems/pegakit/blob/master/docs/getting-started.md" class="btn btn-default btn-sm">
+                    Edit this page on GitHub
+                </a>
+            </div>
+                          <h1 id="getting-started-with-pegakit">Getting started with PegaKit</h1>
+<!-- Welcome! This guide will help you get started with using PHP-DI in your project.
+Before beginning, you need to know what dependency injection is. If you don't, there's a whole article dedicated to it: [Understanding dependency injection](understanding-di.html). -->
+<!-- ## Installation
+Install PHP-DI with [Composer](http://getcomposer.org/doc/00-intro.html):
+```
+composer require php-di/php-di
+```
+PHP-DI requires PHP 5.5 or above.
+## Basic usage
+### 1. Use dependency injection
+First, let's write code using dependency injection without thinking about PHP-DI:
+```php
+class Mailer
+{
+    public function mail($recipient, $content)
+    {
+        // send an email to the recipient
+    }
+}
+```
+```php
+class UserManager
+{
+    private $mailer;
+    public function __construct(Mailer $mailer)
+    {
+        $this->mailer = $mailer;
+    }
+    public function register($email, $password)
+    {
+        // The user just registered, we create his account
+        // ...
+        // We send him an email to say hello!
+        $this->mailer->mail($email, 'Hello and welcome!');
+    }
+}
+```
+As we can see, the `UserManager` takes the `Mailer` as a constructor parameter: this is dependency injection!
+### 2. Create the container
+You can create a container instance preconfigured for development very easily:
+```php
+$container = DI\ContainerBuilder::buildDevContainer();
+```
+If you want to register definition files (explained below) or tweak some options, you can use the container builder:
+```php
+$builder = new DI\ContainerBuilder();
+$builder->...
+$container = $builder->build();
+```
+### 3. Create the objects
+Without PHP-DI, we would have to "wire" the dependencies manually like this:
+```php
+$mailer = new Mailer();
+$userManager = new UserManager($mailer);
+```
+Instead, we can let PHP-DI figure out the dependencies:
+```php
+$userManager = $container->get('UserManager');
+```
+Behind the scenes, PHP-DI will create both a Mailer object and a UserManager object.
+> How does it know what to inject?
+The container uses a technique called **autowiring**. This is not unique to PHP-DI, but this is still awesome. It will scan the code and see what are the parameters needed in the constructors.
+In our example, the `UserManager` constructor takes a `Mailer` object: PHP-DI knows that it needs to create one. Pretty basic, but very efficient.
+> Wait, isn't that weird and risky to scan PHP code like that?
+Don't worry, PHP-DI uses [PHP's Reflection classes](http://php.net/manual/en/book.reflection.php) which is pretty standard: Laravel, Zend Framework and many other containers do the same. Performance wise, such information is read once and then cached, it has no impact.
+## Defining injections
+We have seen **autowiring**, which is when PHP-DI figures out automatically the dependencies a class needs. But we have 3 ways to define what to inject in a class:
+- using [autowiring](autowiring.html)
+- using [annotations](annotations.html)
+- using [PHP definitions](php-definitions.html)
+Every one of them is different and optional. Here is an example of PHP definitions in a file:
+```php
+return [
+    'api.url'    => 'http://api.example.com',
+    'Webservice' => function (Container $c) {
+        return new Webservice($c->get('api.url'));
+    },
+    'Controller' => DI\object()
+        ->constructor(DI\get('Webservice')),
+];
+```
+Please read the [Defining injections](definition.html) documentation to learn about autowiring, annotations and PHP definitions.
+## Framework integration
+We have seen in the example above that we can use the container to get objects:
+```php
+$userManager = $container->get('UserManager');
+```
+However we don't want to call the container everywhere in our application: it would **couple our code to the container**. This is known as the *service locator antipattern* - or dependency *fetching* rather than *injection*.
+To quote the Symfony documentation:
+> You will need to get [an object] from the container at some point but this should be as few times as possible at the entry point to your application.
+For this reason, PHP-DI integrates with some frameworks so that you don't have to call the container (dependencies are injected in controllers):
+- [Symfony](frameworks/symfony2.html)
+- [Silex](frameworks/silex.html)
+- [Zend Framework 1](frameworks/zf1.html)
+- [Zend Framework 2](frameworks/zf2.html)
+- [Silly](frameworks/silly.html)
+If you want to use PHP-DI with another framework or your own code, try to use `$container->get()` in you root application class or front controller. Have a look at this [**demo application**](https://github.com/PHP-DI/demo) built around PHP-DI for a practical example.
+## What's next
+You can head over to [the documentation index](index.html). You can also read the [Best practices guide](best-practices.html), it's a good way to get a good view on when to use each of PHP-DI's features.
+Here are some other topics that might interest you right now:
+- [Configuring the container](container-configuration.html)
+- [Defining injections](definition.html) -->
+                    </article>
+
+    </div>
+
+
+            <footer>
+            <div class='container'>
+                                    <p>
+                        Questions? Can't find what you're looking for?
+                        Please <a href="https://github.com/pegasystems/pegakit/issues/new">create an issue</a>
+                        or chat with us on Slack
+                        <!-- <a href="https://gitter.im/PHP-DI/PHP-DI">Gitter</a> -->
+                    </p>
+                                
+                <!-- <p>
+                    By <a href="http://mnapoli.fr/">Matthieu Napoli</a>
+                    and <a href="https://github.com/pegasystems/pegakit/graphs/contributors">contributors</a>
+                    |
+                    Website generated with
+                    <a href="http://couscous.io" target="_blank">Couscous</a>.
+                </p> -->
+            </div>
+        </footer>
+    
+          <script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+          
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                hljs.initHighlightingOnLoad();
+
+                // Add anchors to headers
+                $('article h2, article h3, article h4, article h5').each(function () {
+                    var url = document.URL.replace(/#.*$/, "") + '#' + $(this).attr('id');
+                    $(this).append(' <a class="anchor" href="' + url + '">#</a>');
+                });
+            });
+        </script>
+    
+
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var search = docsearch({
+                apiKey: 'ef6af24cbacae1f85d3c44741df49167',
+                indexName: 'php-di',
+                inputSelector: '#search-input'
+            });
+            var delay = (function () {
+                var timer = 0;
+                return function (callback, ms) {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+            search.autocomplete.on('autocomplete:selected', function (e, suggestion) {
+                var articleTitle = suggestion.subcategory;
+                // Strip HTML tags
+                var div = document.createElement("div");
+                div.innerHTML = articleTitle;
+                articleTitle = div.textContent || div.innerText || "";
+                // _gaq.push(['_trackEvent', 'search', 'click', articleTitle]);
+            });
+            $('#search-input').bind('input', function () {
+                var search = $(this).val();
+                if (search.length < 3) {
+                    return;
+                }
+                // delay(function () {
+                //     _gaq.push(['_trackPageview', '/search?q=' + search]);
+                // }, 600);
+            });
+        });
+    </script>
+        <!-- Livereload -->
+        <script>
+            document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+                    ':35729/livereload.js?snipver=1"></' + 'script>')
+        </script>
+        <!-- End Livereload -->
+    </body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>PHP-DI 4.1 released - The Dependency Injection Container for humans</title>
+    <meta name="description" content="PHP-DI is a Dependency Injection Container for PHP that intends to be practical and powerful">
+
+    <link rel="canonical" href="http://php-di.org" />
+
+    <meta name="application-name" content="PHP-DI"/>
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/img/apple-touch-icon-152x152.png" />
+    <link rel="icon" type="image/png" href="/img/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/img/favicon-16x16.png" sizes="16x16" />
+    <meta name="msapplication-TileColor" content="#484949" />
+    <meta name="msapplication-TileImage" content="/img/mstile-144x144.png" />
+
+            <link href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css" rel="stylesheet">
+        <link href="/styles/highlight.github.css" rel="stylesheet">
+        
+        <link rel="stylesheet" href="https://patterns-dev.pega.com/styles/pegakit/pegakit.css" media="all">
+        <link href="/styles/all.min.css" rel="stylesheet">
+        
+        <style>
+          table {
+            width: 100%;
+          }
+        </style>
+    </head>
+<body>
+
+    <header>
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#top-navigation">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">PegaKit</a>
+                </div>
+                <div class="navbar-form navbar-left hidden-xs hidden-sm">
+                    <input id="search-input" type="text" class="form-control" placeholder="Search...">
+                </div>
+                <div class="collapse navbar-collapse" id="top-navigation">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/docs/getting-started.html">Getting started</a></li>
+                        <li><a href="/docs/">Documentation</a></li>
+                        <!-- <li><a href="/news/">News</a></li> -->
+                        
+                        <li><a href="/change-log.html">Change log</a></li>
+                        
+                        <li><a class="github" href="https://github.com/pegasystems/pega-digital-design-system"><i class="fa fa-github"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    
+    <section class="container">
+        <div class="row">
+            <div class="col-md-9">
+
+                
+    <article>
+        <h1>PHP-DI 4.1 released</h1>
+
+        <p class="article-information">
+            Posted by Matthieu Napoli on April 16th 2014
+        </p>
+
+        <p>I am happy to announce that PHP-DI version 4.1 has been released.</p>
+<p>This version was focused on stability and documentation improvements, with full backward compatibility.</p>
+<h2 id="container-interop-10-compatibility">Container-Interop 1.0 compatibility</h2>
+<p>If you haven't heard of <a href="https://github.com/container-interop/container-interop">container-interop</a>
+yet, it's a project that tries to improve interoperability between containers and frameworks.
+It is inspired by PSRs from the PHP-FIG (and hopefully will become a PSR some day).</p>
+<p>The first release introduced a <code>ContainerInterface</code> that was exactly the same as
+PHP-DI's <code>ContainerInterface</code> introduced in v4.0. That was of course planned, so that from v4.1 and up
+<code>DI\ContainerInterface</code> is deprecated in favor of
+<a href="https://github.com/container-interop/container-interop/blob/master/src/Interop/Container/ContainerInterface.php"><code>Interop\Container\ContainerInterface</code></a>:</p>
+<pre><code class="language-php">namespace Interop\Container;
+
+interface ContainerInterface
+{
+    public function get($id);
+
+    public function has($id);
+}</code></pre>
+<p>PHP-DI's interface now extends this standard interface, which means there is no BC-break and code using
+<code>DI\ContainerInterface</code> still works.</p>
+<p>However, if you use <code>Interop\Container\ContainerInterface</code> when using the container <strong>your code will not
+be coupled to PHP-DI</strong>. That is extremely good news: it will allow you (or your framework) to switch
+the container and use another library anytime without impact on your codebase (except your container
+configuration of course).</p>
+<p>This is a very similar situation to PSR-3 and the <code>LoggerInterface</code> it you have ever used it.</p>
+<h2 id="better-exception-messages">Better exception messages</h2>
+<p>Errors when using a DI container are embarrassing: given you never (should) use the container directly,
+you never expect an exception from the container. It always comes out of nowhere with cryptic messages
+and it takes you several seconds to understand what's happening.</p>
+<p>To ease this, exception messages have been improved, especially when there is an error while building
+an object.</p>
+<p>Now the whole configuration for the object will be dumped in the exception message, which makes it much
+easier to debug. Here is an example:</p>
+<pre><code>Entry Acme\Store\ProductServiceInterface cannot be resolved: The parameter 'mailer' of Acme\Store\ProductService::__construct has no value defined or guessable
+
+Definition of Acme\Store\ProductServiceInterface:
+Object (
+    class = Acme\Store\ProductService
+    scope = singleton
+    lazy = false
+    __construct(
+        $logger = link(Psr\Log\LoggerInterface)
+        $mailer = #UNDEFINED#
+    )
+)</code></pre>
+<p>Now you can clearly see that the <code>$logger</code> parameter was correctly defined (or recognized)
+but the <code>$mailer</code> parameter wasn't.</p>
+<h2 id="better-symfony-2-documentation">Better Symfony 2 documentation</h2>
+<p>PHP-DI 4.0 works perfectly in Symfony 2 but the documentation about this integration was not really extensive.</p>
+<p>This has been worked upon so that you can feel much more confident trying PHP-DI in Symfony.</p>
+<p><a href="http://php-di.org/doc/frameworks/symfony2.html">Have a look at the documentation</a></p>
+<h2 id="hhvm-support">HHVM support</h2>
+<p><a href="http://hhvm.com">HHVM</a> is the new cool kid in town: it runs PHP much faster than the classic
+PHP Zend Engine.</p>
+<p>Starting from version 4.1, PHP-DI's tests are all green on HHVM. That doesn't necessarily means that
+there is 100% certainty that there is no bug, but it means that any bug found while running
+in HHVM will be fixed.</p>
+<p>In short: <strong>HHVM is officially supported</strong>.</p>
+<p>What about <a href="http://hacklang.org">Hack</a>? HHVM support doesn't mean Hack support.
+I honestly have no idea how PHP-DI behaves with Hack code but I guess it might not work.
+If you are interested in working on this, get in touch!</p>
+<h2 id="change-log">Change log</h2>
+<p>You can also read the complete <a href="../change-log.html">change log</a>.</p>
+    </article>
+
+
+            </div>
+
+            <div class="col-md-3">
+                <h3>
+                    All posts
+                </h3>
+
+                <ul class="all-posts list-unstyled">
+                    <li>
+                        <a href="/news/20-php-di-5-4-released.html">PHP-DI 5.4 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/19-php-di-5-3-released.html">PHP-DI 5.3 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/18-slim-bridge-released.html">Introducing the PHP-DI bridge for Slim</a>
+                    </li>
+                    <li>
+                        <a href="/news/17-php-di-5-2-released.html">PHP-DI 5.2 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/16-php-di-5-1-released.html">PHP-DI 5.1 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/15-php-di-5-0-released.html">PHP-DI 5.0 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/14-php-di-5-syntaxic-sugar.html">Syntactic sugar in PHP-DI 5</a>
+                    </li>
+                    <li>
+                        <a href="/news/13-php-di-4-4-released.html">PHP-DI 4.4 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/12-php-di-is-better-with-php-5-6.html">PHP 5.6 is out and PHP-DI just got better</a>
+                    </li>
+                    <li>
+                        <a href="/news/11-php-di-4-3-released.html">PHP-DI 4.3 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/10-php-di-4-2-released.html">PHP-DI 4.2 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/09-php-di-4-1-released.html">PHP-DI 4.1 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/08-10000-installs.html">10.000 installs!</a>
+                    </li>
+                    <li>
+                        <a href="/news/07-php-di-4-0-released.html">PHP-DI 4.0 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/06-php-di-4-0-new-definitions.html">What will change in PHP-DI 4: the new definition format</a>
+                    </li>
+                    <li>
+                        <a href="/news/05-php-di-3-5.html">PHP-DI 3.5 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/04-php-di-3-4.html">PHP-DI 3.4 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/03-php-di-3-3.html">PHP-DI 3.3 released</a>
+                    </li>
+                    <li>
+                        <a href="/news/02-php-di-3-2.html">PHP-DI 3.2 released</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+
+            <footer>
+            <div class='container'>
+                                    <p>
+                        Questions? Can't find what you're looking for?
+                        Please <a href="https://github.com/pegasystems/pegakit/issues/new">create an issue</a>
+                        or chat with us on Slack
+                        <!-- <a href="https://gitter.im/PHP-DI/PHP-DI">Gitter</a> -->
+                    </p>
+                                
+                <!-- <p>
+                    By <a href="http://mnapoli.fr/">Matthieu Napoli</a>
+                    and <a href="https://github.com/pegasystems/pegakit/graphs/contributors">contributors</a>
+                    |
+                    Website generated with
+                    <a href="http://couscous.io" target="_blank">Couscous</a>.
+                </p> -->
+            </div>
+        </footer>
+    
+              <script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+          
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                hljs.initHighlightingOnLoad();
+
+                // Add anchors to headers
+                $('article h2, article h3, article h4, article h5').each(function () {
+                    var url = document.URL.replace(/#.*$/, "") + '#' + $(this).attr('id');
+                    $(this).append(' <a class="anchor" href="' + url + '">#</a>');
+                });
+            });
+        </script>
+    
+
+
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var search = docsearch({
+                apiKey: 'ef6af24cbacae1f85d3c44741df49167',
+                indexName: 'php-di',
+                inputSelector: '#search-input'
+            });
+            var delay = (function () {
+                var timer = 0;
+                return function (callback, ms) {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+            search.autocomplete.on('autocomplete:selected', function (e, suggestion) {
+                var articleTitle = suggestion.subcategory;
+                // Strip HTML tags
+                var div = document.createElement("div");
+                div.innerHTML = articleTitle;
+                articleTitle = div.textContent || div.innerText || "";
+                // _gaq.push(['_trackEvent', 'search', 'click', articleTitle]);
+            });
+            $('#search-input').bind('input', function () {
+                var search = $(this).val();
+                if (search.length < 3) {
+                    return;
+                }
+                // delay(function () {
+                //     _gaq.push(['_trackPageview', '/search?q=' + search]);
+                // }, 600);
+            });
+        });
+    </script>
+        <!-- Livereload -->
+        <script>
+            document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+                    ':35729/livereload.js?snipver=1"></' + 'script>')
+        </script>
+        <!-- End Livereload -->
+    </body>
+</html>

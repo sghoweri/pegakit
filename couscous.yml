@@ -1,0 +1,84 @@
+# template:
+#     url: https://github.com/CouscousPHP/Template-Light
+    
+# List of directories to include in the processing (by default it's empty, so all markdown files are parsed)
+# Paths are relative to the optional source path given when generating the website, repository root by default
+# include:
+#   - docs
+
+# Base URL of the published website
+baseUrl: https://pegasystems.github.io/pegakit
+
+# Used to link to the GitHub project
+github:
+    # user: myself
+    repo: pegasystems/pegakit
+
+title: PegaKit
+subTitle: ""
+
+# Set the target branch in which to deploy the generated website
+branch: gh-pages
+  #This is a great project.
+
+# The left menu bar
+# menu:
+#     items:
+#         principles:
+#             text: Principles
+#             relativeUrl: docs/principles
+#             
+#         atomic-design:
+#             text: Atomic Design
+#             relativeUrl: docs/atomic-design
+
+exclude:
+    - vendor
+    - website
+    - src
+    - tests
+    - logo
+
+menu:
+    items:
+        # introduction:
+        #     section: Introduction
+        #     items:
+        #         getting-started:
+        #             text: Getting started
+        #             url: docs/getting-started.html
+        #         understanding-di:
+        #             text: Understanding dependency injection
+        #             url: docs/understanding-di.html
+        #         best-practices:
+        #             text: "\"Best practices\" guide"
+        #             url: docs/best-practices.html
+        usage:
+            section: CSS Framework
+            items:
+                utilities:
+                    text: All Utilities
+                    url: docs/css-framework/utilities.html
+                font-sizes:
+                    text: Font Sizes
+                    url: docs/css-framework/utilities/font-sizes.html
+                text-alignment:
+                    text: Text Alignment
+                    url: docs/css-framework/utilities/text-alignment.html
+                floats:
+                    text: Floats
+                    url: docs/css-framework/utilities/floats.html
+                clearfix:
+                    text: Clearfix
+                    url: docs/css-framework/utilities/clearfix.html
+                spacing:
+                    text: Spacing (Docs In Progress)
+                    # url: #
+
+frameworks:
+    zf1: Zend Framework 1
+    zf2: Zend Framework 2
+    symfony2: Symfony
+    silex: Silex
+    slim: Slim
+    silly: Silly
